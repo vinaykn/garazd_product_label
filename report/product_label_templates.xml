@@ -149,80 +149,106 @@
     </template>
 
     <template id="label_50x25">
-        <table style="margin: 0; padding: 0; width: 100%; border-collapse: collapse;">
-            <tbody style="border: 0;">
-                <tr height="25px" style="border: 0; margin:0; padding:0;">
-                    <td style="border: 0; margin:0; padding:0; vertical-align: top;">
-                        <div style="overflow:hidden; height: 16px !important; padding: 1px 2px 0; line-height: 1.1; font-size: 7px;">
-                            <span t-field="label.product_id.name" style="line-height: 1.1;"/>
-                            <span t-if="label.product_id.product_template_attribute_value_ids"
-                                  t-esc="u', '.join(map(lambda x: x.attribute_line_id.attribute_id.name + u': ' + x.name, label.product_id.product_template_attribute_value_ids))"
-                                  style="display:block; white-space: nowrap; overflow:hidden; text-overflow: ellipsis;"/>
-                        </div>
-                        <div style="width: 100%; padding: 0; margin: 0; font-size: 10px; font-weight: bold; line-height: 1.0; text-align: right; padding-right: 2px;">
-                            <span t-if="label.product_id.currency_id.position == 'before'" t-field="label.product_id.currency_id.symbol"/>
-                            <span t-field="label.product_id.lst_price"/>
-                            <span t-if="label.product_id.currency_id.position == 'after'" t-field="label.product_id.currency_id.symbol"/>
-                        </div>
-                        <div t-if="label.product_id.default_code" style="width: 100%; padding: 0; margin: 0; font-size: 6px; font-weight: 900; text-align: center; padding-top: 0px;">
-                            <span t-field="label.product_id.default_code"/>
-                        </div>
-                        <t t-if="label.product_id.barcode">
-                            <div t-out="label.product_id.barcode"
-                                 t-options="{'widget': 'barcode', 'quiet': 0, 'symbology': 'auto', 'img_style': 'overflow: hidden; width: 100%; height: 0.95rem;', 'humanreadable': label.wizard_id.humanreadable}"/>
-                        </t>
-                    </td>
-                </tr>
-            </tbody>
+        <table style="width:100%; border-collapse:collapse; border:none; padding:0; margin:0; table-layout:fixed;">
+            <tr>
+                <td style="width:49mm; height:25mm; padding:0; margin:0; border:none; vertical-align:top;">
+                    <table style="width:100%; border-collapse:collapse; border:none; padding:0; margin:0; table-layout:fixed;">
+                        <tr>
+                            <td style="padding:0; margin:0; border:none; vertical-align:top;">
+                                <div style="font-weight:700; font-size:9px; line-height:1.1; font-family:Arial, sans-serif; white-space:normal; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">
+                                    <span t-field="label.product_id.name"/>
+                                    <span t-if="label.product_id.product_template_attribute_value_ids" style="display:block; font-weight:700;">
+                                        <span t-esc="u', '.join(map(lambda x: x.attribute_line_id.attribute_id.name + u': ' + x.name, label.product_id.product_template_attribute_value_ids))"/>
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0; margin:0; border:none; vertical-align:middle;">
+                                <table style="width:100%; border-collapse:collapse; border:none; padding:0; margin:0; table-layout:fixed;">
+                                    <tr>
+                                        <td style="width:50%; padding:0; margin:0; border:none; text-align:left; font-size:8px; font-weight:700;">
+                                            <span t-if="label.product_id.default_code" t-field="label.product_id.default_code"/>
+                                        </td>
+                                        <td style="width:50%; padding:0; margin:0; border:none; text-align:right; font-size:14px; font-weight:700;">
+                                            <t t-if="label.product_id.currency_id.position == 'before'">
+                                                <span t-field="label.product_id.currency_id.symbol"/>
+                                            </t>
+                                            <span t-field="label.product_id.lst_price"/>
+                                            <t t-if="label.product_id.currency_id.position == 'after'">
+                                                <span t-field="label.product_id.currency_id.symbol"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0; margin:0; border:none; vertical-align:bottom; height:7mm;">
+                                <t t-if="label.product_id.barcode">
+                                    <div style="width:100%; text-align:center;">
+                                        <div t-out="label.product_id.barcode" t-options="{'widget': 'barcode', 'symbology': 'code128', 'quiet': 0, 'img_style': 'width:100%; height:6mm;', 'humanreadable': True}"/>
+                                    </div>
+                                </t>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
         </table>
     </template>
 
+
     <template id="report_product_label_50x25_2col_template">
         <t t-call="web.html_container">
+            <t t-call="web.basic_layout"/>
+
             <t t-set="count" t-value="0"/>
-            <t t-foreach="docs" t-as="label">
-                <t t-set="qty" t-value="1"/>
-                <t t-if="label.qty">
-                    <t t-set="qty" t-value="label.qty"/>
-                </t>
-                <t t-foreach="list(range(qty))" t-as="index_qty">
-                    <t t-if="count % 2 == 0">
-                        <table width="100%"
-                               style="width:100mm; border-collapse:separate; border-spacing:2mm 0; table-layout:fixed; border:none; page-break-after:auto;">
-                            <tr>
-                                <td style="width:49mm; height:25mm; padding:0; margin:0; border:none; vertical-align:top; page-break-inside:avoid;">
-                                    <div t-att-style="'border: %dpx solid #777;'.format(label.wizard_id.border_width) if label.wizard_id.border_width else 'border:none;'">
-                                        <t t-call="garazd_product_label.label_50x25"/>
-                                    </div>
-                                </td>
-                                <td style="width:49mm; height:25mm; padding:0; margin:0; border:none; vertical-align:top; page-break-inside:avoid;">
-                                    <t t-if="count % 2 == 0">
+            <div class="oe_structure"/>
+
+            <!-- ONE table per row (2 labels) -->
+            <table style="width:100mm; border-collapse:separate; border-spacing:2mm 0; table-layout:fixed; border:none; padding:0; margin:0;">
+                <tbody>
+                    <t t-foreach="docs" t-as="label">
+                        <t t-set="qty" t-value="1"/>
+                        <t t-if="label.qty" t-set="qty" t-value="label.qty"/>
+                        <t t-foreach="list(range(qty))" t-as="index_qty">
+                            <t t-if="count % 2 == 0">
+                                <tr style="page-break-inside: avoid;">
+                                    <td style="width:49mm; height:25mm; padding:0; margin:0; border:none; vertical-align:top; page-break-inside:avoid;">
+                                        <div t-att-style="'border: %dpx solid #777;'.format(label.wizard_id.border_width) if label.wizard_id.border_width else 'border:none;'">
+                                            <t t-call="garazd_product_label.label_50x25"/>
+                                        </div>
+                                    </td>
+                                    <td style="width:49mm; height:25mm; padding:0; margin:0; border:none; vertical-align:top; page-break-inside:avoid;">
                                         <div style="display:none"/>
-                                    </t>
-                                </td>
-                            </tr>
-                        </table>
+
+                                    </td>
+                                </tr>
+                            </t>
+
+                            <t t-else="">
+                                <!-- when count is odd, render second label in its own row: the first label is already done -->
+                                <tr style="page-break-inside: avoid;">
+                                    <td style="width:49mm; height:25mm; padding:0; margin:0; border:none; vertical-align:top; page-break-inside:avoid;">
+                                        <div style="visibility:hidden;">&#160;</div>
+                                    </td>
+                                    <td style="width:49mm; height:25mm; padding:0; margin:0; border:none; vertical-align:top; page-break-inside:avoid;">
+                                        <div t-att-style="'border: %dpx solid #777;'.format(label.wizard_id.border_width) if label.wizard_id.border_width else 'border:none;'">
+                                            <t t-call="garazd_product_label.label_50x25"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </t>
+
+                            <t t-set="count" t-value="count+1"/>
+                        </t>
                     </t>
-                    <t t-else="">
-                        <table width="100%"
-                               style="width:100mm; border-collapse:separate; border-spacing:2mm 0; table-layout:fixed; border:none; page-break-after:auto;">
-                            <tr>
-                                <td style="width:49mm; height:25mm; padding:0; margin:0; border:none; vertical-align:top; page-break-inside:avoid;">
-                                    <div style="display:none"/>
-                                </td>
-                                <td style="width:49mm; height:25mm; padding:0; margin:0; border:none; vertical-align:top; page-break-inside:avoid;">
-                                    <div t-att-style="'border: %dpx solid #777;'.format(label.wizard_id.border_width) if label.wizard_id.border_width else 'border:none;'">
-                                        <t t-call="garazd_product_label.label_50x25"/>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                    </t>
-                    <t t-set="count" t-value="count+1"/>
-                </t>
-            </t>
+                </tbody>
+            </table>
         </t>
     </template>
+
 
 
 
