@@ -149,149 +149,104 @@
     </template>
 
     <template id="label_50x25">
-
-        <div style="
-            width:49mm;
-            height:25mm;
-            padding:1mm;
-            margin:0;
-            overflow:hidden;
-            box-sizing:border-box;
-            font-family:Arial,sans-serif;
-        ">
-
+        <div style="width:49mm;height:25mm;padding:1mm;box-sizing:border-box;overflow:hidden;font-family:Arial,sans-serif;">
             <!-- Product Name -->
-            <div style="
-                font-size:9px;
-                font-weight:bold;
-                line-height:1.1;
-                height:8mm;
-                overflow:hidden;
-            ">
+            <div style="height:8mm;font-size:9px;font-weight:bold;line-height:1.1;overflow:hidden;">
                 <span t-field="label.product_id.name"/>
-
-                <span t-if="label.product_id.product_template_attribute_value_ids"
+                <span
+                    t-if="label.product_id.product_template_attribute_value_ids"
                     style="display:block;">
-
                     <span t-esc="u', '.join(map(lambda x:
                         x.attribute_line_id.attribute_id.name + u': ' + x.name,
-                        label.product_id.product_template_attribute_value_ids))"/>
-
-                </span>
-
+                        label.product_id.product_template_attribute_value_ids))"/></span>
             </div>
-
-            <!-- SKU + Price -->
-
-            <div style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                margin-top:1mm;
-                margin-bottom:1mm;
-            ">
-
-                <div style="
-                    font-size:8px;
-                    font-weight:bold;
-                ">
-                    <span t-if="label.product_id.default_code"
-                        t-field="label.product_id.default_code"/>
-                </div>
-
-                <div style="
-                    font-size:14px;
-                    font-weight:bold;
-                ">
-
-                    <t t-if="label.product_id.currency_id.position=='before'">
-                        <span t-field="label.product_id.currency_id.symbol"/>
-                    </t>
-
-                    <span t-field="label.product_id.lst_price"/>
-
-                    <t t-if="label.product_id.currency_id.position=='after'">
-                        <span t-field="label.product_id.currency_id.symbol"/>
-                    </t>
-
-                </div>
-
-            </div>
-
-            <!-- Barcode -->
-
+            <!-- SKU + PRICE -->
+            <table style="width:100%;border-collapse:collapse;">
+                <tr>
+                    <td style="width:50%;font-size:8px;font-weight:bold;text-align:left;">
+                        <span
+                            t-if="label.product_id.default_code"
+                            t-field="label.product_id.default_code"/>
+                    </td>
+                    <td style="width:50%;font-size:14px;font-weight:bold;text-align:right;">
+                        <t t-if="label.product_id.currency_id.position=='before'">
+                            <span t-field="label.product_id.currency_id.symbol"/>
+                        </t>
+                        <span t-field="label.product_id.lst_price"/>
+                        <t t-if="label.product_id.currency_id.position=='after'">
+                            <span t-field="label.product_id.currency_id.symbol"/>
+                        </t>
+                    </td>
+                </tr>
+            </table>
+            <!-- BARCODE -->
             <t t-if="label.product_id.barcode">
-
-                <div style="
-                    width:35mm;
-                    margin:0 auto;
-                    text-align:center;
-                ">
-
-                    <div t-out="label.product_id.barcode"
+                <div style="margin-top:1mm;text-align:center;">
+                    <div
+                        t-out="label.product_id.barcode"
                         t-options="{
                             'widget':'barcode',
                             'symbology':'auto',
                             'quiet':0,
                             'humanreadable':True,
                             'img_style':'width:35mm;height:15mm;'
-                        }"/>
-
-                </div>
-
+                        }"/></div>
             </t>
-
         </div>
-
     </template>
-
     <template id="report_product_label_50x25_2col_template">
-
         <t t-call="web.html_container">
-
-            <div class="page"
-                style="
-                    margin:2mm;
-                    padding:0;
-                ">
-
-                <div style="
-                    display:flex;
-                    flex-wrap:wrap;
-                    column-gap:3mm;
-                    row-gap:2mm;
-                    width:101mm;
-                ">
-
-                    <t t-foreach="docs" t-as="label">
-
-                        <t t-set="qty" t-value="label.qty or 1"/>
-
-                        <t t-foreach="range(qty)" t-as="i">
-
-                            <div style="
-                                width:49mm;
-                                height:25mm;
-                                overflow:hidden;
-                                page-break-inside:avoid;
-                                break-inside:avoid;
-                                box-sizing:border-box;
-                            ">
-
-                                <t t-call="garazd_product_label.label_50x25"/>
-
-                            </div>
-
+            <div class="page" style="margin:2mm;padding:0;">
+                <table
+        style="
+            width:101mm;
+            border-collapse:separate;
+            border-spacing:3mm 2mm;
+            table-layout:fixed;
+        ">
+                    <tbody>
+                        <t t-set="counter" t-value="0"/>
+                        <t t-foreach="docs" t-as="label">
+                            <t t-set="qty" t-value="label.qty or 1"/>
+                            <t t-foreach="range(qty)" t-as="i">
+                                <t t-if="counter % 2 == 0">
+                                    <tr>
+                                        <!-- LEFT LABEL -->
+                                        <td
+                        style="
+                            width:49mm;
+                            height:25mm;
+                            vertical-align:top;
+                            padding:0;
+                        ">
+                                            <t t-call="garazd_product_label.label_50x25"/>
+                                        </td>
+                                    </t>
+                                    <t t-if="counter % 2 == 1">
+                                        <!-- RIGHT LABEL -->
+                                        <td
+                        style="
+                            width:49mm;
+                            height:25mm;
+                            vertical-align:top;
+                            padding:0;
+                        ">
+                                            <t t-call="garazd_product_label.label_50x25"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-set="counter" t-value="counter+1"/></t>
                         </t>
-
-                    </t>
-
-                </div>
-
+                        <!-- If odd number of labels -->
+                        <t t-if="counter % 2 == 1">
+                            <tr>
+                                <td style="width:49mm;height:25mm;"></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
             </div>
-
         </t>
-
     </template>
 
     <template id="report_product_label_from_template">
