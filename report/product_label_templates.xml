@@ -223,96 +223,60 @@
     </template>
 
     <template id="report_product_label_50x25_2col_template">
-
         <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
 
-            <div class="page" style="margin:2mm; padding:0;">
+                <t t-set="count" t-value="0"/>
 
-                <table style="
-                    width:101mm;
-                    border-collapse:separate;
-                    border-spacing:3mm 2mm;
-                    table-layout:fixed;
-                ">
+                <div class="page" style="margin:2mm; padding:0;">
 
-                    <tbody>
+                    <div class="oe_structure"/>
 
-                        <t t-set="counter" t-value="0"/>
+                    <t t-foreach="docs" t-as="label">
 
-                        <t t-foreach="docs" t-as="label">
+                        <t t-set="qty" t-value="1"/>
+                        <t t-if="label.qty">
+                            <t t-set="qty" t-value="label.qty"/>
+                        </t>
 
-                            <t t-set="qty" t-value="label.qty or 1"/>
+                        <t t-foreach="list(range(qty))" t-as="index_qty">
 
-                            <t t-foreach="range(qty)" t-as="i">
-
-                                <!-- Start a new row -->
-                                <t t-if="counter % 2 == 0">
-                                    <tr>
-
-                                        <td style="
-                                            width:49mm;
-                                            height:25mm;
-                                            padding:0;
-                                            vertical-align:top;
-                                            border:none;
-                                        ">
-
-                                            <t t-call="garazd_product_label.label_50x25"/>
-
-                                        </td>
-
-                                </t>
-
-                                <!-- Second column -->
-                                <t t-if="counter % 2 == 1">
-
-                                        <td style="
-                                            width:49mm;
-                                            height:25mm;
-                                            padding:0;
-                                            vertical-align:top;
-                                            border:none;
-                                        ">
-
-                                            <t t-call="garazd_product_label.label_50x25"/>
-
-                                        </td>
-
-                                    </tr>
-
-                                </t>
-
-                                <t t-set="counter" t-value="counter + 1"/>
-
+                            <!-- New page after every 20 labels -->
+                            <t t-if="count and count % 20 == 0">
+                                <div style="clear:both; page-break-after:always;"></div>
                             </t>
 
-                        </t>
+                            <!-- Clear after every 2 labels -->
+                            <t t-if="count % 2 == 0">
+                                <div style="clear:both;"></div>
+                            </t>
 
-                        <!-- Fill empty second column if odd number of labels -->
-
-                        <t t-if="counter % 2 == 1">
-
-                            <tr>
-
-                                <td style="
+                            <div
+                                style="
+                                    float:left;
                                     width:49mm;
                                     height:25mm;
-                                    padding:0;
-                                    border:none;
-                                "></td>
+                                    margin-right:3mm;
+                                    margin-bottom:2mm;
+                                    overflow:hidden;
+                                    box-sizing:border-box;
+                                    page-break-inside:avoid;
+                                ">
 
-                            </tr>
+                                <t t-call="garazd_product_label.label_50x25"/>
+
+                            </div>
+
+                            <t t-set="count" t-value="count + 1"/>
 
                         </t>
 
-                    </tbody>
+                    </t>
 
-                </table>
+                </div>
 
-            </div>
-
+            </t>
         </t>
-
     </template>
 
     <template id="report_product_label_from_template">
