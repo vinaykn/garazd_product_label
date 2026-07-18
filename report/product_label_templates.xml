@@ -157,21 +157,21 @@
             <tbody style="border: 0;">
                 <tr height="85px" style="border: 0;">
                     <td class="text-center" style="padding: 0; margin: 0; border: 0;">
-                        <!-- Row 1: product name -->
-                        <div style="overflow: hidden; height: 36px !important; font-size: 12px; line-height: 1.15; text-align: left;">
+                        <!-- Row 1: product name (right-aligned) -->
+                        <div style="overflow: hidden; height: 36px !important; font-size: 12px; line-height: 1.15; text-align: right;">
                             <span t-field="label.product_id.name" style="line-height: 1.15;"/>
                             <span t-if="label.product_id.product_template_attribute_value_ids"
                                   t-esc="u', '.join(map(lambda x: x.attribute_line_id.attribute_id.name + u': ' + x.name, label.product_id.product_template_attribute_value_ids))"
                                   class="badge"/>
                         </div>
-                        <!-- Row 2: price, code and barcode -->
+                        <!-- Row 2: price (left) and code (right), barcode below -->
                         <div style="width: 100%; overflow: hidden; height: 20px !important;">
-                            <div style="float: right; width: 55%; font-size: 15px; font-weight: bold; line-height: 1.0; text-align: right; margin-bottom: 0px;">
+                            <div style="float: left; width: 55%; font-size: 15px; font-weight: bold; line-height: 1.0; text-align: left; margin-bottom: 0px;">
                                 <span t-if="label.product_id.currency_id.position == 'before'" t-field="label.product_id.currency_id.symbol"/>
                                 <span t-field="label.product_id.lst_price"/>
                                 <span t-if="label.product_id.currency_id.position == 'after'" t-field="label.product_id.currency_id.symbol"/>
                             </div>
-                            <div style="float: left; width: 45%; font-size: 9px; font-weight: 900; line-height: 1.0; text-align: left; padding-top: 5px;">
+                            <div style="float: right; width: 45%; font-size: 9px; font-weight: 900; line-height: 1.0; text-align: right; padding-top: 5px;">
                                 <span t-if="label.product_id.default_code"><span t-field="label.product_id.default_code"/> </span>
                             </div>
                         </div>
@@ -203,24 +203,22 @@
         </t>
     </template>
 
-    <!-- 2 labels per page, side by side: page size 100x25mm.
-         SPACING (adjust these three values to taste):
-           - Paperformat margins (reports xml): 1mm on all sides = outer safe margin.
-           - Each label box width: 150px (~45mm of content).
-           - Gutter between the labels: margin-right 14px (~4mm) on the first box.
-         150 + 14 + 150 = 314px, fits inside the ~310-323px printable width. -->
+    <!-- 2 labels per page, side by side, matching the 2-up die-cut roll:
+         50mm label + 2mm gap + 50mm label = 102mm web (page_width 102 in paperformat).
+         Module px convention ~3.3px/mm: label 165px, gap 7px, total 337px.
+         Each label box has 4px inner side padding so text/barcode stays off the die-cut edge. -->
     <template id="report_product_label_100x25_template">
         <t t-call="web.html_container">
             <t t-call="web.basic_layout">
                 <t t-set="flat_labels" t-value="[l for l in docs for _ in range(l.qty or 1)]"/>
                 <t t-foreach="range(0, len(flat_labels), 2)" t-as="i">
-                    <div class="page" style="page-break-after: always; width: 314px !important; height: 85px !important; overflow: hidden;">
-                        <div style="float: left; width: 150px !important; height: 85px !important; margin-right: 14px; overflow: hidden;">
+                    <div class="page" style="page-break-after: always; width: 337px !important; height: 85px !important; overflow: hidden;">
+                        <div style="float: left; width: 165px !important; height: 85px !important; margin-right: 7px; padding: 0 4px; box-sizing: border-box; overflow: hidden;">
                             <t t-set="label" t-value="flat_labels[i]"/>
                             <t t-call="garazd_product_label.label_50x25"/>
                         </div>
                         <t t-if="i + 1 &lt; len(flat_labels)">
-                            <div style="float: left; width: 150px !important; height: 85px !important; overflow: hidden;">
+                            <div style="float: left; width: 165px !important; height: 85px !important; padding: 0 4px; box-sizing: border-box; overflow: hidden;">
                                 <t t-set="label" t-value="flat_labels[i + 1]"/>
                                 <t t-call="garazd_product_label.label_50x25"/>
                             </div>
