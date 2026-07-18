@@ -148,23 +148,23 @@
     </template>
 
     <!-- Reusable 50x25mm label content (2 rows, 1 column): name row + price/code/barcode row -->
+    <!-- Uses a single tr/td with stacked divs (like label_50x38 / label_66x25) instead of two
+         table rows, because a table with height:100% and two <tr>s splits the height EVENLY
+         between rows regardless of content, leaving a large blank gap. Stacked divs inside one
+         cell size themselves to their own content instead. -->
     <template id="label_50x25">
         <table class="table" t-att-style="'height: 100%; margin: 0; padding: 0; border: {};'.format('%dpx solid #777;' % label.wizard_id.border_width if label.wizard_id.border_width else '0')">
             <tbody style="border: 0;">
-                <!-- Row 1: product name -->
-                <tr style="border: 0;">
+                <tr height="89px" style="border: 0;">
                     <td class="text-center" style="padding: 0; margin: 0; border: 0;">
-                        <div style="overflow: hidden; height: 38px !important; font-size: 12px; line-height: 1.15; text-align: left;">
+                        <!-- Row 1: product name -->
+                        <div style="overflow: hidden; height: 40px !important; font-size: 12px; line-height: 1.15; text-align: left;">
                             <span t-field="label.product_id.name" style="line-height: 1.15;"/>
                             <span t-if="label.product_id.product_template_attribute_value_ids"
                                   t-esc="u', '.join(map(lambda x: x.attribute_line_id.attribute_id.name + u': ' + x.name, label.product_id.product_template_attribute_value_ids))"
                                   class="badge"/>
                         </div>
-                    </td>
-                </tr>
-                <!-- Row 2: price, code and barcode -->
-                <tr style="border: 0;">
-                    <td class="text-center" style="padding: 0; margin: 0; border: 0;">
+                        <!-- Row 2: price, code and barcode -->
                         <div style="width: 100%; overflow: hidden; height: 20px !important;">
                             <div style="float: right; width: 55%; font-size: 15px; font-weight: bold; line-height: 1.0; text-align: right; margin-bottom: 0px;">
                                 <span t-if="label.product_id.currency_id.position == 'before'" t-field="label.product_id.currency_id.symbol"/>
