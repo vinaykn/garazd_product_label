@@ -193,7 +193,7 @@
                     <t t-if="label.qty" t-set="qty" t-value="label.qty" />
                     <t t-foreach="list(range(qty))" t-as="index_qty">
                         <div class="page" style="page-break-after: always;">
-                            <div style="height: 89px !important; width: 165px !important;">
+                            <div style="height: 89px !important; width: 165px !important; padding: 0 2px; box-sizing: border-box;">
                                 <t t-call="garazd_product_label.label_50x25"/>
                             </div>
                         </div>
@@ -203,19 +203,24 @@
         </t>
     </template>
 
-    <!-- 2 labels per page, side by side: page size 100x25mm -->
+    <!-- 2 labels per page, side by side: page size 100x25mm.
+         SPACING (adjust these three values to taste):
+           - Paperformat margins (reports xml): 1mm on all sides = outer safe margin.
+           - Each label box width: 150px (~45mm of content).
+           - Gutter between the labels: margin-right 14px (~4mm) on the first box.
+         150 + 14 + 150 = 314px, fits inside the ~310-323px printable width. -->
     <template id="report_product_label_100x25_template">
         <t t-call="web.html_container">
             <t t-call="web.basic_layout">
                 <t t-set="flat_labels" t-value="[l for l in docs for _ in range(l.qty or 1)]"/>
                 <t t-foreach="range(0, len(flat_labels), 2)" t-as="i">
-                    <div class="page" style="page-break-after: always; width: 330px !important; height: 89px !important;">
-                        <div style="float: left; width: 165px !important; height: 89px !important;">
+                    <div class="page" style="page-break-after: always; width: 314px !important; height: 89px !important;">
+                        <div style="float: left; width: 150px !important; height: 89px !important; margin-right: 14px; overflow: hidden;">
                             <t t-set="label" t-value="flat_labels[i]"/>
                             <t t-call="garazd_product_label.label_50x25"/>
                         </div>
                         <t t-if="i + 1 &lt; len(flat_labels)">
-                            <div style="float: left; width: 165px !important; height: 89px !important;">
+                            <div style="float: left; width: 150px !important; height: 89px !important; overflow: hidden;">
                                 <t t-set="label" t-value="flat_labels[i + 1]"/>
                                 <t t-call="garazd_product_label.label_50x25"/>
                             </div>
