@@ -212,13 +212,13 @@
             <t t-call="web.basic_layout">
                 <t t-set="flat_labels" t-value="[l for l in docs for _ in range(l.qty or 1)]"/>
                 <t t-foreach="range(0, len(flat_labels), 2)" t-as="i">
-                    <div class="page" style="page-break-after: always; width: 350px !important; height: 85px !important; overflow: hidden;">
-                        <div style="float: left; width: 165px !important; height: 85px !important; margin-right: 20px; padding: 0 4px; box-sizing: border-box; overflow: hidden;">
+                    <div class="page" style="page-break-after: always; width: 344px !important; height: 85px !important; overflow: hidden;">
+                        <div style="float: left; width: 162px !important; height: 85px !important; margin-left: 0px; margin-right: 16px; padding: 0 4px; box-sizing: border-box; overflow: hidden;">
                             <t t-set="label" t-value="flat_labels[i]"/>
                             <t t-call="garazd_product_label.label_50x25"/>
                         </div>
                         <t t-if="i + 1 &lt; len(flat_labels)">
-                            <div style="float: left; width: 165px !important; height: 85px !important; padding: 0 4px; box-sizing: border-box; overflow: hidden;">
+                            <div style="float: left; width: 162px !important; height: 85px !important; padding: 0 4px; box-sizing: border-box; overflow: hidden;">
                                 <t t-set="label" t-value="flat_labels[i + 1]"/>
                                 <t t-call="garazd_product_label.label_50x25"/>
                             </div>
