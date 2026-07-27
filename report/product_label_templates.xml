@@ -156,7 +156,7 @@
         <table class="table" t-att-style="'height: 100%; margin: 0; padding: 0; border: {};'.format('%dpx solid #777;' % label.wizard_id.border_width if label.wizard_id.border_width else '0')">
             <tbody style="border: 0;">
                 <tr height="85px" style="border: 0;">
-                    <td class="text-center" style="padding: 0; margin: 0; border: 0;">
+                    <td class="text-center" style="padding: 0; margin: 0; border: 0; vertical-align: middle;">
                         <!-- Row 1: product name (right-aligned) -->
                         <div style="overflow: hidden; height: 36px !important; font-size: 12px; line-height: 1.15; text-align: right;">
                             <span t-field="label.product_id.name" style="line-height: 1.15;"/>
