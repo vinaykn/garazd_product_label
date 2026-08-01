@@ -278,7 +278,7 @@
                     <div class="page" style="page-break-after: always; width: 368px !important; height: 85px !important; overflow: hidden;">
                         <t t-foreach="range(4)" t-as="j">
                             <t t-if="i + j &lt; len(flat_labels)">
-                                <div style="float: left; width: 78px !important; height: 85px !important; margin-left: 14px; padding: 0 4px; box-sizing: border-box; overflow: hidden;">
+                                <div style="float: left; width: 78px !important; height: 85px !important; margin-left: 8px; padding: 0 4px; box-sizing: border-box; overflow: hidden;">
                                     <t t-set="label" t-value="flat_labels[i + j]"/>
                                     <t t-call="garazd_product_label.label_25x25"/>
                                 </div>
