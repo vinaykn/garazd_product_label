@@ -264,23 +264,21 @@
         </table>
     </template>
 
-    <!-- 4 labels per page, side by side, sized directly in real millimeters against the
-         declared 104x25mm page (paperformat_label_25x25) instead of an approximate px/mm
-         conversion. The previous px-based convention (borrowed from the other templates'
-         "~3.3px/mm, 344px container" approximation) doesn't reliably match wkhtmltopdf's actual
-         physical rendering, and small per-box rounding/scaling drift compounds across floats,
-         which is why label 3 was landing on top of label 2. Every box gets the same
-         margin-left: 2mm, which naturally produces a 2mm gap before label 1 and between every
-         pair of labels: 4 x (2mm margin + 24mm box) = 104mm, filling the page exactly. -->
+    <!-- 4 labels per page, side by side (float:left, px-based, box-sizing: border-box).
+         Box width 78px, 14px gap before every label (including label 1): 4x(78+14) = 368px.
+         Note: the page container is widened to 368px to fit these values exactly, which makes
+         the HTML wider than the physical 104mm page (104mm @ 96dpi ~= 393px, so 368px is still
+         within the true printable width, but it no longer matches the 344px convention used
+         elsewhere in this file). -->
     <template id="report_product_label_25x25_template">
         <t t-call="web.html_container">
             <t t-call="web.basic_layout">
                 <t t-set="flat_labels" t-value="[l for l in docs for _ in range(l.qty or 1)]"/>
                 <t t-foreach="range(0, len(flat_labels), 4)" t-as="i">
-                    <div class="page" style="page-break-after: always; width: 104mm !important; height: 25mm !important; overflow: hidden;">
+                    <div class="page" style="page-break-after: always; width: 368px !important; height: 85px !important; overflow: hidden;">
                         <t t-foreach="range(4)" t-as="j">
                             <t t-if="i + j &lt; len(flat_labels)">
-                                <div style="float: left; width: 24mm !important; height: 25mm !important; margin-left: 2mm; padding: 0 1mm; box-sizing: border-box; overflow: hidden;">
+                                <div style="float: left; width: 78px !important; height: 85px !important; margin-left: 14px; padding: 0 4px; box-sizing: border-box; overflow: hidden;">
                                     <t t-set="label" t-value="flat_labels[i + j]"/>
                                     <t t-call="garazd_product_label.label_25x25"/>
                                 </div>
