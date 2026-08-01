@@ -264,9 +264,15 @@
         </table>
     </template>
 
-    <!-- 4 labels per page, side by side: 25mm label + gaps = 104mm web (page_width 104 in paperformat).
-         Same px convention as report_product_label_100x25_template (~3.3px/mm): page 344px,
-         each label box 81px with 6px gaps between (4x81 + 3x6 = 342px). -->
+    <!-- 4 labels per page, side by side: 25mm label x4 = 100mm on a 104mm-wide page, following
+         the same convention as report_product_label_100x25_template above (float:left, fixed
+         344px page, box-sizing: border-box). That template uses a generous 4px inner side
+         padding per box (so content stays off the die-cut edge) and spends nearly all of its
+         spare container width on the gap rather than maximizing box width - the same is applied
+         here: box width 78px (not the theoretical max of 81px) frees up room for a real 4px
+         inset per box plus an 8px gap between every label (4x78 + 3x8 = 336px, 8px spare in the
+         344px container), instead of the previous tight 81px box / 2px padding / 6px gap that
+         left too little separation once printed. -->
     <template id="report_product_label_25x25_template">
         <t t-call="web.html_container">
             <t t-call="web.basic_layout">
@@ -275,7 +281,7 @@
                     <div class="page" style="page-break-after: always; width: 344px !important; height: 85px !important; overflow: hidden;">
                         <t t-foreach="range(4)" t-as="j">
                             <t t-if="i + j &lt; len(flat_labels)">
-                                <div t-attf-style="float: left; width: 81px !important; height: 85px !important; padding: 0 2px; box-sizing: border-box; overflow: hidden; #{'' if j == 3 else 'margin-right: 6px;'}">
+                                <div t-attf-style="float: left; width: 78px !important; height: 85px !important; padding: 0 4px; box-sizing: border-box; overflow: hidden; #{'' if j == 3 else 'margin-right: 8px;'}">
                                     <t t-set="label" t-value="flat_labels[i + j]"/>
                                     <t t-call="garazd_product_label.label_25x25"/>
                                 </div>
