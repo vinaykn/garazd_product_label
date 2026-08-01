@@ -264,21 +264,23 @@
         </table>
     </template>
 
-    <!-- 4 labels per page, side by side: 25mm label x4 = 100mm on a 104mm-wide page, following
-         the same convention as report_product_label_100x25_template above (float:left, fixed
-         344px page, box-sizing: border-box). Box width 78px (4x78=312px) leaves 32px spare in
-         the 344px container, split evenly into 4x8px: an 8px left margin before label 1 (so it
-         isn't flush against the page edge) plus the maximum possible 8px gap between every
-         other label (4x78 + 4x8 = 344px, fits the container exactly). -->
+    <!-- 4 labels per page, side by side, sized directly in real millimeters against the
+         declared 104x25mm page (paperformat_label_25x25) instead of an approximate px/mm
+         conversion. The previous px-based convention (borrowed from the other templates'
+         "~3.3px/mm, 344px container" approximation) doesn't reliably match wkhtmltopdf's actual
+         physical rendering, and small per-box rounding/scaling drift compounds across floats,
+         which is why label 3 was landing on top of label 2. Every box gets the same
+         margin-left: 2mm, which naturally produces a 2mm gap before label 1 and between every
+         pair of labels: 4 x (2mm margin + 24mm box) = 104mm, filling the page exactly. -->
     <template id="report_product_label_25x25_template">
         <t t-call="web.html_container">
             <t t-call="web.basic_layout">
                 <t t-set="flat_labels" t-value="[l for l in docs for _ in range(l.qty or 1)]"/>
                 <t t-foreach="range(0, len(flat_labels), 4)" t-as="i">
-                    <div class="page" style="page-break-after: always; width: 344px !important; height: 85px !important; overflow: hidden;">
+                    <div class="page" style="page-break-after: always; width: 104mm !important; height: 25mm !important; overflow: hidden;">
                         <t t-foreach="range(4)" t-as="j">
                             <t t-if="i + j &lt; len(flat_labels)">
-                                <div t-attf-style="float: left; width: 78px !important; height: 85px !important; padding: 0 4px; box-sizing: border-box; overflow: hidden; #{'margin-left: 8px;' if j == 0 else ''} #{'margin-right: 8px;' if j &lt; 3 else ''}">
+                                <div style="float: left; width: 24mm !important; height: 25mm !important; margin-left: 2mm; padding: 0 1mm; box-sizing: border-box; overflow: hidden;">
                                     <t t-set="label" t-value="flat_labels[i + j]"/>
                                     <t t-call="garazd_product_label.label_25x25"/>
                                 </div>
