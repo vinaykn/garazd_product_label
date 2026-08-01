@@ -266,8 +266,10 @@
 
     <!-- 4 labels per page, side by side: 25mm label x4 = 100mm on a 104mm-wide page, following
          the same convention as report_product_label_100x25_template above (float:left, fixed
-         344px page, box-sizing: border-box). Box width 80px, 4px inner side padding per box,
-         8px gap between labels (4x80 + 3x8 = 344px, fits the 344px container exactly). -->
+         344px page, box-sizing: border-box). Box width 78px (4x78=312px) leaves 32px spare in
+         the 344px container, split evenly into 4x8px: an 8px left margin before label 1 (so it
+         isn't flush against the page edge) plus the maximum possible 8px gap between every
+         other label (4x78 + 4x8 = 344px, fits the container exactly). -->
     <template id="report_product_label_25x25_template">
         <t t-call="web.html_container">
             <t t-call="web.basic_layout">
@@ -276,7 +278,7 @@
                     <div class="page" style="page-break-after: always; width: 344px !important; height: 85px !important; overflow: hidden;">
                         <t t-foreach="range(4)" t-as="j">
                             <t t-if="i + j &lt; len(flat_labels)">
-                                <div t-attf-style="float: left; width: 80px !important; height: 85px !important; padding: 0 4px; box-sizing: border-box; overflow: hidden; #{'' if j == 3 else 'margin-right: 8px;'}">
+                                <div t-attf-style="float: left; width: 78px !important; height: 85px !important; padding: 0 4px; box-sizing: border-box; overflow: hidden; #{'margin-left: 8px;' if j == 0 else ''} #{'margin-right: 8px;' if j &lt; 3 else ''}">
                                     <t t-set="label" t-value="flat_labels[i + j]"/>
                                     <t t-call="garazd_product_label.label_25x25"/>
                                 </div>
