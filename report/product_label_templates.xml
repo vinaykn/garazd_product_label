@@ -264,39 +264,23 @@
         </table>
     </template>
 
-    <!-- 4 labels per page, side by side, laid out with a percentage-width table so the 4
-         columns always divide the actually-rendered page into exact quarters regardless of
-         wkhtmltopdf's internal mm/px DPI scaling. Fixed mm or px offsets drifted on physical
-         prints even though the on-screen preview looked correctly spaced, because wkhtmltopdf
-         doesn't map absolute CSS units 1:1 onto the paperformat's physical page size.
-         table-layout: fixed enforces the widths strictly (not content-driven). Gaps are their
-         own spacer <td>s (23.5% label, 2% gap, x4 labels + x3 gaps = 100%) rather than padding
-         on the label cells, because wkhtmltopdf doesn't reliably honor box-sizing: border-box
-         on table cells - padding there was added on top of the 25% width instead of being
-         included in it, which pushed the total past 100% and caused the overlap. Using separate
-         cells sidesteps that, and also removes the asymmetric leading gap before label 1 and
-         trailing gap after label 4 that padding on every cell produced. All borders are
-         explicitly turned off since Odoo's report base CSS puts a border on bare <table>/<td>. -->
+    <!-- 4 labels per page, side by side: 25mm label + gaps = 104mm web (page_width 104 in paperformat).
+         Same px convention as report_product_label_100x25_template (~3.3px/mm): page 344px,
+         each label box 81px with 6px gaps between (4x81 + 3x6 = 342px). -->
     <template id="report_product_label_25x25_template">
         <t t-call="web.html_container">
             <t t-call="web.basic_layout">
                 <t t-set="flat_labels" t-value="[l for l in docs for _ in range(l.qty or 1)]"/>
                 <t t-foreach="range(0, len(flat_labels), 4)" t-as="i">
-                    <div class="page" style="page-break-after: always; width: 100%; height: 85px !important; overflow: hidden;">
-                        <table style="width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse; border: none;">
-                            <tbody>
-                                <tr>
-                                    <t t-foreach="range(4)" t-as="j">
-                                        <td t-if="i + j &lt; len(flat_labels)" style="width: 23.5%; overflow: hidden; vertical-align: top; border: none;">
-                                            <t t-set="label" t-value="flat_labels[i + j]"/>
-                                            <t t-call="garazd_product_label.label_25x25"/>
-                                        </td>
-                                        <td t-else="" style="width: 23.5%; border: none;"/>
-                                        <td t-if="j &lt; 3" style="width: 2%; border: none;"/>
-                                    </t>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="page" style="page-break-after: always; width: 344px !important; height: 85px !important; overflow: hidden;">
+                        <t t-foreach="range(4)" t-as="j">
+                            <t t-if="i + j &lt; len(flat_labels)">
+                                <div t-attf-style="float: left; width: 81px !important; height: 85px !important; padding: 0 2px; box-sizing: border-box; overflow: hidden; #{'' if j == 3 else 'margin-right: 6px;'}">
+                                    <t t-set="label" t-value="flat_labels[i + j]"/>
+                                    <t t-call="garazd_product_label.label_25x25"/>
+                                </div>
+                            </t>
+                        </t>
                     </div>
                 </t>
             </t>
