@@ -264,26 +264,33 @@
         </table>
     </template>
 
-    <!-- 4 labels per page, side by side, positioned with absolute "mm" offsets on a 104x25mm
-         page: each label is 25mm wide (4x25=100mm) with a uniform 1mm gap between labels
-         (3 gaps = 3mm), so label N starts at N*26mm: 0, 26, 52, 78 (ending at 103mm, within
-         the 104mm page). mm units are used directly (instead of a px/mm approximation) so the
-         layout maps 1:1 onto the physical page and doesn't drift/overlap between labels. -->
+    <!-- 4 labels per page, side by side, laid out with a percentage-width table so the 4
+         columns always divide the actually-rendered page into exact quarters regardless of
+         wkhtmltopdf's internal mm/px DPI scaling. Fixed mm or px offsets drifted on physical
+         prints even though the on-screen preview looked correctly spaced, because wkhtmltopdf
+         doesn't map absolute CSS units 1:1 onto the paperformat's physical page size.
+         table-layout: fixed enforces the 25% widths strictly (not content-driven), and
+         box-sizing: border-box keeps each cell's padding (the inter-label gap) inside its 25%
+         share instead of adding on top of it. -->
     <template id="report_product_label_25x25_template">
         <t t-call="web.html_container">
             <t t-call="web.basic_layout">
                 <t t-set="flat_labels" t-value="[l for l in docs for _ in range(l.qty or 1)]"/>
-                <t t-set="label_offsets_mm" t-value="[0, 26, 52, 78]"/>
                 <t t-foreach="range(0, len(flat_labels), 4)" t-as="i">
-                    <div class="page" style="page-break-after: always; position: relative; width: 104mm !important; height: 25mm !important; overflow: hidden;">
-                        <t t-foreach="range(4)" t-as="j">
-                            <t t-if="i + j &lt; len(flat_labels)">
-                                <div t-attf-style="position: absolute; top: 0; left: #{label_offsets_mm[j]}mm; width: 25mm !important; height: 25mm !important; padding: 0 2px; box-sizing: border-box; overflow: hidden;">
-                                    <t t-set="label" t-value="flat_labels[i + j]"/>
-                                    <t t-call="garazd_product_label.label_25x25"/>
-                                </div>
-                            </t>
-                        </t>
+                    <div class="page" style="page-break-after: always; width: 100%; height: 85px !important; overflow: hidden;">
+                        <table style="width: 100%; height: 100%; table-layout: fixed; border-collapse: collapse;">
+                            <tbody>
+                                <tr>
+                                    <t t-foreach="range(4)" t-as="j">
+                                        <td t-if="i + j &lt; len(flat_labels)" style="width: 25%; padding: 0 1%; box-sizing: border-box; overflow: hidden; vertical-align: top;">
+                                            <t t-set="label" t-value="flat_labels[i + j]"/>
+                                            <t t-call="garazd_product_label.label_25x25"/>
+                                        </td>
+                                        <td t-else="" style="width: 25%;"/>
+                                    </t>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </t>
             </t>
